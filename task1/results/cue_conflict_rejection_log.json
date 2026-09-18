@@ -1,0 +1,52 @@
+{
+  "cat-truck:A_shape_B_texture": {
+    "accepted": 22,
+    "rejected": 0,
+    "target": 22
+  },
+  "cat-truck:B_shape_A_texture": {
+    "accepted": 22,
+    "rejected": 0,
+    "target": 22
+  },
+  "bird-ship:A_shape_B_texture": {
+    "accepted": 22,
+    "rejected": 0,
+    "target": 22
+  },
+  "bird-ship:B_shape_A_texture": {
+    "accepted": 22,
+    "rejected": 0,
+    "target": 22
+  },
+  "dog-car:A_shape_B_texture": {
+    "accepted": 22,
+    "rejected": 0,
+    "target": 22
+  },
+  "dog-car:B_shape_A_texture": {
+    "accepted": 22,
+    "rejected": 0,
+    "target": 22
+  },
+  "horse-airplane:A_shape_B_texture": {
+    "accepted": 22,
+    "rejected": 0,
+    "target": 22
+  },
+  "horse-airplane:B_shape_A_texture": {
+    "accepted": 22,
+    "rejected": 0,
+    "target": 22
+  },
+  "monkey-deer:A_shape_B_texture": {
+    "accepted": 22,
+    "rejected": 0,
+    "target": 22
+  },
+  "monkey-deer:B_shape_A_texture": {
+    "accepted": 22,
+    "rejected": 0,
+    "target": 22
+  }
+}

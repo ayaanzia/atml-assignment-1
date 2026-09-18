@@ -1,0 +1,12 @@
+{
+  "airplane": "bird",
+  "bird": "car",
+  "car": "airplane",
+  "cat": "monkey",
+  "deer": "truck",
+  "dog": "cat",
+  "horse": "ship",
+  "monkey": "dog",
+  "ship": "horse",
+  "truck": "deer"
+}

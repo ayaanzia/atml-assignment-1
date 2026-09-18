@@ -1,0 +1,9 @@
+condition,model,accuracy,accuracy_delta_vs_clean,consistency_vs_clean
+grayscale,resnet50,0.968,-0.02200000000000002,0.97
+grayscale,vit_b_16,0.976,-0.018000000000000016,0.978
+grayscale,clip_vit_b_32_linear,0.97,-0.01200000000000001,0.976
+grayscale,clip_vit_b_32_zeroshot,0.952,-0.006000000000000005,0.956
+color_swap,resnet50,0.99,0.0,0.996
+color_swap,vit_b_16,0.996,0.0020000000000000018,0.998
+color_swap,clip_vit_b_32_linear,0.976,-0.006000000000000005,0.994
+color_swap,clip_vit_b_32_zeroshot,0.952,-0.006000000000000005,0.986
