@@ -1,0 +1,16 @@
+{
+  "seed": 6304,
+  "selection_metric": "mean source validation macro-F1",
+  "main_dan_lambda": 1.0,
+  "main_sam_rho": 0.05,
+  "controlled_dan_lambdas": [
+    0.1,
+    1.0,
+    10.0
+  ],
+  "main_checkpoints": {
+    "ERM": "/mnt/Windows/Ayaan files/parhai/uni/3 fall/ATML/PA1/repo/task2/results/checkpoints/source_only_seed6304.pt",
+    "DAN-DG": "/mnt/Windows/Ayaan files/parhai/uni/3 fall/ATML/PA1/repo/task3/results/checkpoints/dan_dg_seed6304.pt",
+    "SAM": "/mnt/Windows/Ayaan files/parhai/uni/3 fall/ATML/PA1/repo/task3/results/checkpoints/sam_seed6304.pt"
+  }
+}

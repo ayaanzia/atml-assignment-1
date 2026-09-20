@@ -1,0 +1,10 @@
+# PACS is supplied separately and must not be committed.
+data/
+
+# Generated experiment artifacts. Keep the documentation/placeholders.
+results/cache/*
+!results/cache/.gitkeep
+results/checkpoints/*.pt
+results/training_curves/*.png
+results/confusion_matrices/*.png
+

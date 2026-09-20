@@ -1,0 +1,33 @@
+{
+  "method": "source_only",
+  "run_name": "source_only",
+  "epoch": 11,
+  "seed": 6304,
+  "class_to_idx": {
+    "dog": 0,
+    "elephant": 1,
+    "giraffe": 2,
+    "guitar": 3,
+    "horse": 4,
+    "house": 5,
+    "person": 6
+  },
+  "source_val": {
+    "photo": {
+      "accuracy": 0.9670658682634731,
+      "macro_f1": 0.9606577614803063
+    },
+    "art_painting": {
+      "accuracy": 0.9243902439024391,
+      "macro_f1": 0.930780082602648
+    },
+    "cartoon": {
+      "accuracy": 0.9488272921108742,
+      "macro_f1": 0.9526656243406183
+    }
+  },
+  "mean_source_val_macro_f1": 0.9480344894745243,
+  "lambda_mmd": 1.0,
+  "grl_ceiling": 1.0,
+  "amp_dtype": "torch.bfloat16"
+}

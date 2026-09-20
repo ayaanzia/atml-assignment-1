@@ -1,0 +1,7 @@
+group,cache_row,source_index,unknown_class,predicted_cifar10_class,mls_unknownness,threshold,note
+near,562,7133,bus,truck,-12.640625,-5.745121002197266,semantically plausible
+near,75,959,fox,dog,-11.6640625,-5.745121002197266,semantically plausible
+near,410,5201,bus,truck,-11.296875,-5.745121002197266,semantically plausible
+far,100,1163,clock,airplane,-11.6640625,-5.745121002197266,surprising
+far,507,6218,keyboard,frog,-11.5234375,-5.745121002197266,surprising
+far,557,6729,mushroom,bird,-11.4140625,-5.745121002197266,surprising

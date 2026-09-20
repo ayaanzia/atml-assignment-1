@@ -5,3 +5,7 @@ venv/
 .venv/
 venv
 .venv
+**/__pycache__/
+**/plan_task*.md
+.ipynb_checkpoints/
+**/results/checkpoints/*.pt

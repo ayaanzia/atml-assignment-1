@@ -1,0 +1,33 @@
+{
+  "method": "dan",
+  "run_name": "dan_lambda_0.1",
+  "epoch": 13,
+  "seed": 6304,
+  "class_to_idx": {
+    "dog": 0,
+    "elephant": 1,
+    "giraffe": 2,
+    "guitar": 3,
+    "horse": 4,
+    "house": 5,
+    "person": 6
+  },
+  "source_val": {
+    "photo": {
+      "accuracy": 0.9730538922155688,
+      "macro_f1": 0.9702352493423689
+    },
+    "art_painting": {
+      "accuracy": 0.9243902439024391,
+      "macro_f1": 0.9195627670540133
+    },
+    "cartoon": {
+      "accuracy": 0.9616204690831557,
+      "macro_f1": 0.9645007897589365
+    }
+  },
+  "mean_source_val_macro_f1": 0.9514329353851063,
+  "lambda_mmd": 0.1,
+  "grl_ceiling": 1.0,
+  "amp_dtype": "torch.bfloat16"
+}

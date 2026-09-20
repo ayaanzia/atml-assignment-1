@@ -1,0 +1,33 @@
+{
+  "method": "cdan",
+  "run_name": "cdan",
+  "epoch": 9,
+  "seed": 6304,
+  "class_to_idx": {
+    "dog": 0,
+    "elephant": 1,
+    "giraffe": 2,
+    "guitar": 3,
+    "horse": 4,
+    "house": 5,
+    "person": 6
+  },
+  "source_val": {
+    "photo": {
+      "accuracy": 0.9491017964071856,
+      "macro_f1": 0.9445237139839266
+    },
+    "art_painting": {
+      "accuracy": 0.8951219512195122,
+      "macro_f1": 0.8963213538929943
+    },
+    "cartoon": {
+      "accuracy": 0.9488272921108742,
+      "macro_f1": 0.9558915631875482
+    }
+  },
+  "mean_source_val_macro_f1": 0.9322455436881564,
+  "lambda_mmd": 1.0,
+  "grl_ceiling": 1.0,
+  "amp_dtype": "torch.bfloat16"
+}

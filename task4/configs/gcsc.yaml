@@ -1,0 +1,12 @@
+name: gcsc
+seed: 6304
+epochs: 100
+batch_size: 128
+learning_rate: 0.1
+momentum: 0.9
+weight_decay: 0.0005
+num_classes: 10
+num_workers: 0
+randaugment: true
+randaugment_num_ops: 2
+randaugment_magnitude: 9

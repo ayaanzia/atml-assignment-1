@@ -1,0 +1,14 @@
+name: proser
+seed: 6304
+epochs: 50
+batch_size: 128
+learning_rate: 0.001
+momentum: 0.9
+weight_decay: 0.0005
+num_classes: 10
+num_dummy_classes: 5
+beta: 1.0
+gamma: 0.1
+mixup_alpha: 2.0
+num_workers: 0
+pretrained_checkpoint: results/checkpoints/vanilla_seed6304.pt
