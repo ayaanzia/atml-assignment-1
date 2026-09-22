@@ -1,0 +1,22 @@
+{
+  "seed": 6304,
+  "projection": "t-SNE",
+  "metric": "cosine",
+  "perplexity": 30.0,
+  "cue_manifest_rows": 220,
+  "model_training_or_inference_performed": false,
+  "outputs": [
+    "results/figures/tsne_resnet50_grayscale.png",
+    "results/figures/tsne_resnet50_cue_conflict.png",
+    "results/figures/tsne_resnet50_translate_d32_up.png",
+    "results/figures/tsne_resnet50_patch_shuffle.png",
+    "results/figures/tsne_vit_b_16_grayscale.png",
+    "results/figures/tsne_vit_b_16_cue_conflict.png",
+    "results/figures/tsne_vit_b_16_translate_d32_up.png",
+    "results/figures/tsne_vit_b_16_patch_shuffle.png",
+    "results/figures/tsne_clip_vit_b_32_grayscale.png",
+    "results/figures/tsne_clip_vit_b_32_cue_conflict.png",
+    "results/figures/tsne_clip_vit_b_32_translate_d32_up.png",
+    "results/figures/tsne_clip_vit_b_32_patch_shuffle.png"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "score": "MLS",
+  "threshold": -5.745121002197266,
+  "leaders": {
+    "near": {
+      "most_accepted_unknown_class": "wolf",
+      "accepted_rate": 0.89,
+      "main_absorbing_cifar10_class": "cat",
+      "absorbing_share_of_accepted": 0.5280898876404494
+    },
+    "far": {
+      "most_accepted_unknown_class": "wardrobe",
+      "accepted_rate": 0.58,
+      "main_absorbing_cifar10_class": "truck",
+      "absorbing_share_of_accepted": 0.5
+    }
+  },
+  "aggregate_acceptance_validated_against_score_table": true,
+  "model_training_or_inference_performed": false
+}

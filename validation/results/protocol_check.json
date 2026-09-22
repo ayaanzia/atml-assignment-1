@@ -1,0 +1,23 @@
+{
+  "source_train_sizes": {
+    "photo": 1336,
+    "art_painting": 1638,
+    "cartoon": 1875
+  },
+  "source_validation_sizes": {
+    "photo": 334,
+    "art_painting": 410,
+    "cartoon": 469
+  },
+  "target_adaptation_size": 3929,
+  "target_evaluation_size": 3929,
+  "class_to_idx": {
+    "dog": 0,
+    "elephant": 1,
+    "giraffe": 2,
+    "guitar": 3,
+    "horse": 4,
+    "house": 5,
+    "person": 6
+  }
+}

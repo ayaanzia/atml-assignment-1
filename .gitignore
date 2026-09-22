@@ -9,3 +9,6 @@ venv
 **/plan_task*.md
 .ipynb_checkpoints/
 **/results/checkpoints/*.pt
+*.pth
+report_temp/
+report-temp-v2/

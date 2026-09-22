@@ -1,0 +1,27 @@
+{
+  "original_split_seed": 6304,
+  "additional_training_seeds": [
+    6305,
+    6306
+  ],
+  "methods": {
+    "dan": {
+      "lambda_mmd": 1.0
+    },
+    "dann": {
+      "grl_ceiling": 1.0
+    },
+    "dan_dg": {
+      "lambda_dg": 1.0
+    }
+  },
+  "collapse_definition": {
+    "mean_source_accuracy_below": 0.3,
+    "target_accuracy_below": 0.1
+  },
+  "extreme_loss_definition": {
+    "maximum_recorded_loss_above": 1000.0
+  },
+  "selection": "best mean source validation macro-F1; patience 5; maximum 30 epochs",
+  "target_labels_used_during_training_or_selection": false
+}

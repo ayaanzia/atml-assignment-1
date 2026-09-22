@@ -1,0 +1,25 @@
+{
+  "checks": {
+    "DAN-DG": {
+      "checkpoint_sha256": "0ce6ad1df3db701fe0bbafb50390574f195e9981b6c61f13edb8f47d845af441",
+      "checkpoint_epoch": 1,
+      "all_model_tensors_finite": true,
+      "checkpoint_source_f1_matches_table": true
+    },
+    "SAM": {
+      "checkpoint_sha256": "8de455ebed5bc54108715ea7969a7fc7c616d9b3e2e5f580c59e524454f3bd3c",
+      "checkpoint_epoch": 6,
+      "all_model_tensors_finite": true,
+      "checkpoint_source_f1_matches_table": true
+    },
+    "ERM": {
+      "task2_source_checkpoint_sha256": "faa089501d1f70a768d9d84da8d76278d811a04b6859238587341f75101fab6f",
+      "hash_matches_recorded_metadata": true,
+      "recorded_as_unchanged": true
+    }
+  },
+  "warnings": [
+    "DAN-DG: collapsed accuracy profile"
+  ],
+  "scope": "saved-state finiteness and cross-file consistency; not a reproducibility rerun"
+}

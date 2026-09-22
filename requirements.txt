@@ -1,0 +1,15 @@
+# Versions recorded from the environment used for the cache-only reproduction.
+# Install torch/torchvision from the index appropriate for the local CUDA runtime.
+torch==2.12.1
+torchvision==0.27.1
+open-clip-torch==3.3.0
+numpy==2.4.4
+pandas==3.0.3
+matplotlib==3.11.0
+scikit-learn==1.9.0
+scikit-image==0.26.0
+scipy==1.18.0
+Pillow==12.2.0
+PyYAML==6.0.3
+tqdm==4.70.0
+ipykernel==7.3.0

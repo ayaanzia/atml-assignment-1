@@ -5,6 +5,3 @@ data/
 results/cache/*
 !results/cache/.gitkeep
 results/checkpoints/*.pt
-results/training_curves/*.png
-results/confusion_matrices/*.png
-

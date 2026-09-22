@@ -1,0 +1,45 @@
+{
+  "checks": {
+    "source_only": {
+      "checkpoint_sha256": "faa089501d1f70a768d9d84da8d76278d811a04b6859238587341f75101fab6f",
+      "checkpoint_epoch": 11,
+      "all_model_tensors_finite": true,
+      "all_discriminator_tensors_finite": true,
+      "checkpoint_source_f1_matches_table": true,
+      "all_curve_values_finite": true,
+      "maximum_recorded_loss": 0.5028411342029242
+    },
+    "dan": {
+      "checkpoint_sha256": "60e7e2e4ee6f00bbcd0f7ca10d8353623d805fa188a87d3baeb0579f5e1b05a7",
+      "checkpoint_epoch": 3,
+      "all_model_tensors_finite": true,
+      "all_discriminator_tensors_finite": true,
+      "checkpoint_source_f1_matches_table": true,
+      "all_curve_values_finite": true,
+      "maximum_recorded_loss": 1.9396387379220192
+    },
+    "dann": {
+      "checkpoint_sha256": "53607d7415ecee8d8b6210eff5bb656f311f62f501884688056cf20015c227d2",
+      "checkpoint_epoch": 6,
+      "all_model_tensors_finite": true,
+      "all_discriminator_tensors_finite": true,
+      "checkpoint_source_f1_matches_table": true,
+      "all_curve_values_finite": true,
+      "maximum_recorded_loss": 238030.70129984184
+    },
+    "cdan": {
+      "checkpoint_sha256": "6755527f17e65ff0ca565a23366dd4fb4065fa5910e4ad190cab0d91ed08ec5d",
+      "checkpoint_epoch": 9,
+      "all_model_tensors_finite": true,
+      "all_discriminator_tensors_finite": true,
+      "checkpoint_source_f1_matches_table": true,
+      "all_curve_values_finite": true,
+      "maximum_recorded_loss": 0.7259557382857545
+    }
+  },
+  "warnings": [
+    "dan: collapsed accuracy profile",
+    "dann: recorded loss exceeds 1000"
+  ],
+  "scope": "saved-state finiteness and cross-file consistency; not a reproducibility rerun"
+}

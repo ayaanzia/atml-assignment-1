@@ -3,7 +3,3 @@ __pycache__/
 results/checkpoints/*.pt
 results/cache/*
 !results/cache/.gitkeep
-results/training_curves/*
-!results/training_curves/.gitkeep
-results/confusion_matrices/*
-!results/confusion_matrices/.gitkeep

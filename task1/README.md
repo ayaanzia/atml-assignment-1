@@ -2,6 +2,8 @@
 
 ## Contents
 - `task1.ipynb` — main deliverable notebook (run top-to-bottom).
+- `postprocess_cached_results.py` — cache-only figure/manifest regeneration;
+  this adds the cue-conflict representation panels without editing the notebook.
 - `utils/` — reusable modules imported by the notebook:
   - `config.py` — seeds (SEED=6304), device/precision, paths, `make_rng`.
   - `backbones.py` — frozen ResNet-50 / ViT-B/16 / OpenCLIP ViT-B/32 wrappers.
@@ -37,28 +39,15 @@ in does not have:
    pandas matplotlib umap-learn` (umap-learn only needed if you switch the
    projection method from the default t-SNE to UMAP).
 
-## What was and wasn't verified here
-The authoring sandbox had no GPU and no egress to the hosts above (only
-package registries), so the notebook could not be executed end-to-end here.
-Instead, every non-trivial piece of indexing/math logic was extracted and
-smoke-tested standalone with plain NumPy:
-- the color-swap derangement (no fixed points, valid permutation),
-- per-image deterministic patch permutations (reproducible, non-identity),
-- the class-balanced eval-subset sampler (correct total/per-class counts),
-- the LAB Reinhard-style color-transfer math (verified it shifts a
-  synthetic class's color statistics toward a donor class's),
-- the SSIM-based cue-conflict rejection rule (verified it accepts an
-  identical image, and rejects both a degenerate flat image and a heavily
-  corrupted one),
-- the reflection-pad + shifted-crop translation directions (verified with a
-  single-marker-pixel test that "up"/"down"/"left"/"right" move the visible
-  content the way their names claim — an earlier version had this
-  backwards and was caught and fixed by this test),
-- the patch-shuffle reassembly indexing (verified identity-permutation
-  round-trips exactly, and a simple 2-patch swap lands where expected).
+## Recorded execution status
 
-What was **not** executed: any actual model forward pass, linear-head
-training, AdaIN stylization, or STL-10 I/O, since none of the required
-weights/data/GPU were reachable. Treat this as carefully logic-checked but
-unexecuted code — run it in a proper environment and inspect the outputs
-under `results/` before treating any numbers as final.
+The main notebook has been executed and the repository contains its CSV/JSON
+results, feature caches, and figures. The cache-only supplement can be run with:
+
+```bash
+venv/bin/python task1/postprocess_cached_results.py
+```
+
+It performs no backbone inference, AdaIN inference, or training. It reconstructs
+the 220-row content/style ID manifest from the fixed seed (validated against the
+cached cue IDs and labels) and fits t-SNE to the already extracted features.
