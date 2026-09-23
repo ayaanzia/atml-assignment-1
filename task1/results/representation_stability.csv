@@ -1,13 +1,13 @@
 backbone,condition,I_T
 resnet50,grayscale,0.8047203421592712
-resnet50,cue_conflict,0.25477635860443115
+resnet50,cue_conflict,0.23086217045783997
 resnet50,translate_d32_up,0.9350941181182861
 resnet50,patch_shuffle,0.694612979888916
 vit_b_16,grayscale,0.7377124428749084
-vit_b_16,cue_conflict,0.22382208704948425
+vit_b_16,cue_conflict,0.2139061987400055
 vit_b_16,translate_d32_up,0.9405261874198914
 vit_b_16,patch_shuffle,0.6341828107833862
 clip_vit_b_32,grayscale,0.8875924348831177
-clip_vit_b_32,cue_conflict,0.7025811076164246
+clip_vit_b_32,cue_conflict,0.6990528702735901
 clip_vit_b_32,translate_d32_up,0.9734756350517273
 clip_vit_b_32,patch_shuffle,0.7551606297492981

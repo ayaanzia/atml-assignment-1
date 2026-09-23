@@ -1,13 +1,13 @@
 """Rebuild Task 1 representation figures from cached features only.
 
 This script deliberately does not instantiate a backbone, train a linear head, or
-run AdaIN.  It also reconstructs the cue-conflict source-pair manifest from the
-fixed seed.  That reconstruction is exact for the committed run because its
-rejection log records zero rejected candidates in every bucket.
+run AdaIN. Cue-conflict rows are read from the manifest written by the notebook;
+they cannot be reconstructed from positional indices after calibrated rejection.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -55,6 +55,25 @@ def load_aggregate(backbone: str, condition: str) -> dict:
     return torch.load(paths[0], map_location="cpu", weights_only=False)
 
 
+def load_for_ids(backbone: str, condition: str, image_ids: list[str]) -> dict:
+    """Load an ordered bundle from either legacy aggregate or stable per-image caches."""
+    aggregate_paths = sorted(CACHE.glob(f"feat__{backbone}__{condition}__*.pt"))
+    aggregate_paths = [path for path in aggregate_paths if "__image_" not in path.name]
+    for path in aggregate_paths:
+        bundle = torch.load(path, map_location="cpu", weights_only=False)
+        if set(image_ids).issubset(bundle["image_ids"]):
+            return {"features": take_rows(bundle, image_ids), "image_ids": image_ids}
+
+    per_image = []
+    for image_id in image_ids:
+        digest = hashlib.sha1(image_id.encode()).hexdigest()[:16]
+        path = CACHE / f"feat__{backbone}__{condition}__image_{digest}.pt"
+        if not path.exists():
+            raise FileNotFoundError(f"Missing stable feature cache for {backbone}/{condition}/{image_id}")
+        per_image.append(torch.load(path, map_location="cpu", weights_only=False)["features"])
+    return {"features": torch.cat(per_image), "image_ids": image_ids}
+
+
 def take_rows(bundle: dict, image_ids: list[str]) -> torch.Tensor:
     lookup = {image_id: row for row, image_id in enumerate(bundle["image_ids"])}
     missing = [image_id for image_id in image_ids if image_id not in lookup]
@@ -63,50 +82,18 @@ def take_rows(bundle: dict, image_ids: list[str]) -> torch.Tensor:
     return bundle["features"][[lookup[image_id] for image_id in image_ids]]
 
 
-def reconstruct_cue_manifest() -> pd.DataFrame:
-    subset = read_json(RESULTS / "eval_subset_ids.json")
-    rejection_log = read_json(RESULTS / "cue_conflict_rejection_log.json")
-    if any(entry["rejected"] != 0 for entry in rejection_log.values()):
-        raise RuntimeError("Cannot reconstruct accepted IDs without rerunning AdaIN when a bucket has rejections")
-
-    pools: dict[int, list[str]] = {index: [] for index in range(len(CLASSES))}
-    for image_id, label in zip(subset["image_ids"], subset["labels"]):
-        pools[int(label)].append(image_id)
-
-    class_to_idx = {name: index for index, name in enumerate(CLASSES)}
-    rng = named_rng("cue_conflict_sampling")
-    rows = []
-    cue_index = 0
-    for class_a, class_b in CUE_PAIRS:
-        a_idx, b_idx = class_to_idx[class_a], class_to_idx[class_b]
-        directions = (("A_shape_B_texture", a_idx, b_idx),
-                      ("B_shape_A_texture", b_idx, a_idx))
-        for direction, content_idx, texture_idx in directions:
-            bucket = f"{class_a}-{class_b}:{direction}"
-            count = int(rejection_log[bucket]["target"])
-            content_rows = rng.integers(0, len(pools[content_idx]), size=count)
-            texture_rows = rng.integers(0, len(pools[texture_idx]), size=count)
-            for content_row, texture_row in zip(content_rows, texture_rows):
-                rows.append({
-                    "cue_id": f"cueconflict-{cue_index}",
-                    "pair": f"{class_a}-{class_b}",
-                    "direction": direction,
-                    "content_class": CLASSES[content_idx],
-                    "content_class_idx": content_idx,
-                    "texture_class": CLASSES[texture_idx],
-                    "texture_class_idx": texture_idx,
-                    "content_id": pools[content_idx][int(content_row)],
-                    "style_id": pools[texture_idx][int(texture_row)],
-                })
-                cue_index += 1
-
-    manifest = pd.DataFrame(rows)
-    cue_bundle = load_aggregate(BACKBONES[0], "cue_conflict")
-    if manifest["cue_id"].tolist() != list(cue_bundle["image_ids"]):
-        raise RuntimeError("Reconstructed cue order does not match the feature cache")
-    if manifest["content_class_idx"].tolist() != [int(x) for x in cue_bundle["labels"]]:
-        raise RuntimeError("Reconstructed cue labels do not match the feature cache")
-    manifest.to_csv(RESULTS / "cue_conflict_manifest.csv", index=False)
+def load_cue_manifest() -> pd.DataFrame:
+    path = RESULTS / "cue_conflict_manifest.csv"
+    if not path.exists():
+        raise FileNotFoundError("Run the cue-conflict notebook cells to write the accepted-row manifest")
+    manifest = pd.read_csv(path)
+    required = {"cue_id", "content_id", "content_class_idx", "style_id", "direction"}
+    missing = required - set(manifest.columns)
+    if missing:
+        raise ValueError(f"Cue-conflict manifest is missing columns: {sorted(missing)}")
+    # Sampling is with replacement, so an exact content/style/direction triple
+    # may appear more than once. Such rows are identical images and intentionally
+    # share one stable cache id.
     return manifest
 
 
@@ -160,7 +147,7 @@ def main() -> None:
     parser.add_argument("--perplexity", type=float, default=30.0)
     args = parser.parse_args()
     FIGURES.mkdir(parents=True, exist_ok=True)
-    manifest = reconstruct_cue_manifest()
+    manifest = load_cue_manifest()
     subset = read_json(RESULTS / "eval_subset_ids.json")
     eval_ids = list(subset["image_ids"])
     eval_labels = [int(label) for label in subset["labels"]]
@@ -169,15 +156,14 @@ def main() -> None:
     for backbone in BACKBONES:
         clean_bundle = load_aggregate(backbone, "clean_eval")
         for condition in CONDITIONS:
-            transformed_bundle = load_aggregate(backbone, condition)
             if condition == "cue_conflict":
                 content_ids = manifest["content_id"].tolist()
                 clean = take_rows(clean_bundle, content_ids)
-                transformed = take_rows(transformed_bundle, manifest["cue_id"].tolist())
+                transformed = load_for_ids(backbone, condition, manifest["cue_id"].tolist())["features"]
                 labels = manifest["content_class_idx"].astype(int).tolist()
             else:
                 clean = take_rows(clean_bundle, eval_ids)
-                transformed = take_rows(transformed_bundle, eval_ids)
+                transformed = load_for_ids(backbone, condition, eval_ids)["features"]
                 labels = eval_labels
             outputs.append(str(plot_projection(backbone, condition, clean, transformed,
                                                labels, args.perplexity).relative_to(ROOT)))

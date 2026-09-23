@@ -1,52 +1,52 @@
 {
   "cat-truck:A_shape_B_texture": {
-    "accepted": 22,
-    "rejected": 0,
-    "target": 22
+    "accepted": 25,
+    "rejected": 5,
+    "target": 30
   },
   "cat-truck:B_shape_A_texture": {
-    "accepted": 22,
-    "rejected": 0,
-    "target": 22
+    "accepted": 24,
+    "rejected": 6,
+    "target": 30
   },
   "bird-ship:A_shape_B_texture": {
-    "accepted": 22,
-    "rejected": 0,
-    "target": 22
+    "accepted": 26,
+    "rejected": 4,
+    "target": 30
   },
   "bird-ship:B_shape_A_texture": {
-    "accepted": 22,
-    "rejected": 0,
-    "target": 22
+    "accepted": 27,
+    "rejected": 3,
+    "target": 30
   },
   "dog-car:A_shape_B_texture": {
-    "accepted": 22,
+    "accepted": 30,
     "rejected": 0,
-    "target": 22
+    "target": 30
   },
   "dog-car:B_shape_A_texture": {
-    "accepted": 22,
-    "rejected": 0,
-    "target": 22
+    "accepted": 21,
+    "rejected": 9,
+    "target": 30
   },
   "horse-airplane:A_shape_B_texture": {
-    "accepted": 22,
-    "rejected": 0,
-    "target": 22
+    "accepted": 27,
+    "rejected": 3,
+    "target": 30
   },
   "horse-airplane:B_shape_A_texture": {
-    "accepted": 22,
+    "accepted": 30,
     "rejected": 0,
-    "target": 22
+    "target": 30
   },
   "monkey-deer:A_shape_B_texture": {
-    "accepted": 22,
-    "rejected": 0,
-    "target": 22
+    "accepted": 26,
+    "rejected": 4,
+    "target": 30
   },
   "monkey-deer:B_shape_A_texture": {
-    "accepted": 22,
-    "rejected": 0,
-    "target": 22
+    "accepted": 27,
+    "rejected": 3,
+    "target": 30
   }
 }

@@ -70,11 +70,9 @@ def representation_stability(feat_clean: torch.Tensor, feat_transformed: torch.T
 # OR if the stylized image is degenerate (near-uniform / near-zero variance,
 # e.g. a decoder failure producing a flat color field).
 # ---------------------------------------------------------------------------
-SSIM_MIN_THRESHOLD = 0.20  # fixed a priori; content structure must be at
-                           # least weakly preserved for the "shape" cue to
-                           # exist at all — pure textures/style should not
-                           # erase 100% of edge/structure correlation with
-                           # the original content image.
+# Selected by the preregistered human review in notebook Section 8b. The full
+# sweep and its stricter-threshold tie rule are persisted under results/.
+SSIM_MIN_THRESHOLD = 0.30
 DEGENERATE_STD_THRESHOLD = 0.02  # per-channel pixel std below this -> flat/degenerate output
 
 

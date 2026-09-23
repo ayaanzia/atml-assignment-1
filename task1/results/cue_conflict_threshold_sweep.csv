@@ -1,0 +1,8 @@
+threshold,agreement_pct,cohen_kappa,fail_precision,fail_recall,fail_f1,manual_pass,manual_fail,predicted_fail,selected,ranking_metric,tie_break_invoked,sweep_min,sweep_max,sweep_count
+0.3,75.0,0.41860465116279066,1.0,0.375,0.5454545454545454,12,8,3,True,cohen_kappa,False,0.2,0.5,7
+0.35,65.0,0.25531914893617025,0.5714285714285714,0.5,0.5333333333333333,12,8,7,False,cohen_kappa,False,0.2,0.5,7
+0.5,50.0,0.13793103448275867,0.4444444444444444,1.0,0.6153846153846154,12,8,18,False,cohen_kappa,False,0.2,0.5,7
+0.4,55.00000000000001,0.08163265306122458,0.4444444444444444,0.5,0.47058823529411764,12,8,9,False,cohen_kappa,False,0.2,0.5,7
+0.25,60.0,0.0,0.0,0.0,0.0,12,8,0,False,cohen_kappa,False,0.2,0.5,7
+0.2,60.0,0.0,0.0,0.0,0.0,12,8,0,False,cohen_kappa,False,0.2,0.5,7
+0.45,45.0,-0.037735849056603765,0.38461538461538464,0.625,0.47619047619047616,12,8,13,False,cohen_kappa,False,0.2,0.5,7

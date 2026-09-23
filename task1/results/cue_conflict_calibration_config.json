@@ -1,0 +1,25 @@
+{
+  "ssim_summary": {
+    "count": 220,
+    "min": 0.21104690423125802,
+    "q05": 0.26873486116098405,
+    "median": 0.41742162634066027,
+    "q95": 0.5773951539590528,
+    "max": 0.7646439319509131
+  },
+  "sweep_min": 0.2,
+  "sweep_max": 0.5,
+  "sweep_step": 0.05,
+  "thresholds": [
+    0.2,
+    0.25,
+    0.3,
+    0.35,
+    0.4,
+    0.45,
+    0.5
+  ],
+  "range_decision": "Retained the preregistered 0.20--0.50 range: the 220-image distribution spans this interval (min 0.211, q05 0.269, median 0.417) and its lower tail is decision-relevant.",
+  "tie_break": "kappa ties within 1e-9 select the stricter (higher) threshold",
+  "positive_class": "fail"
+}
