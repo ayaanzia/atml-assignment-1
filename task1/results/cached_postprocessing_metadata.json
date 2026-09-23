@@ -3,7 +3,7 @@
   "projection": "t-SNE",
   "metric": "cosine",
   "perplexity": 30.0,
-  "cue_manifest_rows": 220,
+  "cue_manifest_rows": 263,
   "model_training_or_inference_performed": false,
   "outputs": [
     "results/figures/tsne_resnet50_grayscale.png",

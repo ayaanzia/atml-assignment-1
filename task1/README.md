@@ -4,6 +4,8 @@
 - `task1.ipynb` — main deliverable notebook (run top-to-bottom).
 - `postprocess_cached_results.py` — cache-only figure/manifest regeneration;
   this adds the cue-conflict representation panels without editing the notebook.
+- `analysis/cue_conflict_calibration.py` — stable cue IDs, stratified manual
+  review sampling, resumable ipywidgets review, and threshold-sweep artifacts.
 - `utils/` — reusable modules imported by the notebook:
   - `config.py` — seeds (SEED=6304), device/precision, paths, `make_rng`.
   - `backbones.py` — frozen ResNet-50 / ViT-B/16 / OpenCLIP ViT-B/32 wrappers.
@@ -36,7 +38,7 @@ in does not have:
    Step 3 cell. `AdaINStyleTransfer` deliberately raises an error rather
    than stylizing with an untrained decoder.
 4. `pip install torch torchvision open_clip_torch scikit-image scikit-learn
-   pandas matplotlib umap-learn` (umap-learn only needed if you switch the
+   pandas matplotlib ipywidgets umap-learn` (umap-learn only needed if you switch the
    projection method from the default t-SNE to UMAP).
 
 ## Recorded execution status
@@ -48,6 +50,38 @@ results, feature caches, and figures. The cache-only supplement can be run with:
 venv/bin/python task1/postprocess_cached_results.py
 ```
 
-It performs no backbone inference, AdaIN inference, or training. It reconstructs
-the 220-row content/style ID manifest from the fixed seed (validated against the
-cached cue IDs and labels) and fits t-SNE to the already extracted features.
+It performs no backbone inference, AdaIN inference, or training. It regenerates
+the plots from the accepted-row manifest and stable per-image feature caches.
+
+## Cue-conflict threshold calibration
+
+The notebook generates the SSIM histogram before manual review, samples about
+10% from each pair/direction bucket with stable content-derived IDs, and writes
+each pass/fail click immediately to `results/cue_conflict_manual_ratings.jsonl`.
+Restarting the review cell skips IDs already present in that file. After all
+ratings are complete, the threshold sweep writes
+`results/cue_conflict_threshold_sweep.csv` and
+`results/figures/cue_conflict_threshold_sweep.png`; fail is the positive class,
+and tied kappa values select the stricter threshold. Record the histogram-informed
+sweep range before rating, then update `SSIM_MIN_THRESHOLD`, raise the candidate
+buffer to 30 per bucket, and rerun the notebook from a fresh kernel.
+
+The completed 20-image review retained the preregistered 0.20--0.50 sweep:
+the original 220-image distribution had minimum 0.211, 5th percentile 0.269,
+median 0.417, and 95th percentile 0.577, so the range covered the lower tail
+through above the median where rejection decisions were informative. The
+selected threshold is **0.30** (75.0% agreement, Cohen's $\kappa=0.419$,
+fail precision 1.000, fail recall 0.375, fail F1 0.545); the stricter-threshold
+tie-break was not invoked. With the final 30-per-bucket buffer, regeneration
+accepted 263/300 images and rejected 37; individual buckets retain 21--30
+accepted images, so the total and balance requirements remain satisfied.
+
+## CLIP-linear confidence caveat
+
+The raw mean maximum softmax confidence for `clip_vit_b_32_linear` is not
+directly comparable to the other decision rules. Its inputs are L2-normalized
+CLIP features, and the weight-decay-regularized linear head has no logit scale
+analogous to CLIP's learned `logit_scale.exp()` used by zero-shot inference.
+Consequently, small logit magnitudes can yield a flatter softmax despite high
+accuracy. The required raw confidence is retained without temperature scaling
+and should not be interpreted as a calibrated cross-model ranking.
