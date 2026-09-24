@@ -39,6 +39,7 @@ class FrozenBackbone(nn.Module):
 
     name: str
     feature_dim: int
+    cache_name: str
 
     def __init__(self):
         super().__init__()
@@ -67,6 +68,7 @@ class FrozenBackbone(nn.Module):
 # ---------------------------------------------------------------------------
 class ResNet50Backbone(FrozenBackbone):
     name = "resnet50"
+    cache_name = name
     feature_dim = 2048
     IMAGENET_MEAN = (0.485, 0.456, 0.406)
     IMAGENET_STD = (0.229, 0.224, 0.225)
@@ -105,6 +107,7 @@ class ResNet50Backbone(FrozenBackbone):
 # ---------------------------------------------------------------------------
 class ViTB16Backbone(FrozenBackbone):
     name = "vit_b_16"
+    cache_name = name
     feature_dim = 768
     IMAGENET_MEAN = (0.485, 0.456, 0.406)
     IMAGENET_STD = (0.229, 0.224, 0.225)
@@ -139,16 +142,23 @@ class ViTB16Backbone(FrozenBackbone):
 # ---------------------------------------------------------------------------
 class CLIPBackbone(FrozenBackbone):
     name = "clip_vit_b_32"
+    # Keep the public result-table name required by the assignment while
+    # separating these features from stale ordinary-GELU cache entries.
+    cache_name = "clip_vit_b_32_quickgelu"
     feature_dim = 512  # ViT-B/32 openai image embedding dim
 
     def __init__(self, class_names: List[str] = STL10_CLASSES):
         super().__init__()
         import open_clip
 
+        # The OpenAI ViT-B/32 checkpoint was trained with QuickGELU.  Recent
+        # OpenCLIP releases warn (and produce subtly different features) when
+        # those weights are loaded into the ordinary-GELU ViT-B-32 config.
+        self.model_name = "ViT-B-32-quickgelu"
         self.model, _, self.preprocess_val = open_clip.create_model_and_transforms(
-            "ViT-B-32", pretrained="openai"
+            self.model_name, pretrained="openai"
         )
-        self.tokenizer = open_clip.get_tokenizer("ViT-B-32")
+        self.tokenizer = open_clip.get_tokenizer(self.model_name)
         # OpenAI CLIP's own normalization constants (NOT ImageNet stats).
         self.CLIP_MEAN = (0.48145466, 0.4578275, 0.40821073)
         self.CLIP_STD = (0.26862954, 0.26130258, 0.27577711)

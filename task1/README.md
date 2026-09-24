@@ -6,6 +6,8 @@
   this adds the cue-conflict representation panels without editing the notebook.
 - `analysis/cue_conflict_calibration.py` — stable cue IDs, stratified manual
   review sampling, resumable ipywidgets review, and threshold-sweep artifacts.
+- `cue_review_app/` — dependency-free local browser GUI for blind approval of
+  every cue-conflict candidate and seeded, exactly balanced final selection.
 - `utils/` — reusable modules imported by the notebook:
   - `config.py` — seeds (SEED=6304), device/precision, paths, `make_rng`.
   - `backbones.py` — frozen ResNet-50 / ViT-B/16 / OpenCLIP ViT-B/32 wrappers.
@@ -53,7 +55,34 @@ venv/bin/python task1/postprocess_cached_results.py
 It performs no backbone inference, AdaIN inference, or training. It regenerates
 the plots from the accepted-row manifest and stable per-image feature caches.
 
+Per-image cache rows are cloned before serialization so they do not retain and
+re-save an entire batch's tensor storage. If this repository contains caches
+created before that fix, compact them without recomputing features using
+`python task1/compact_feature_cache.py --prefix feat__ --minimum-bytes 100000`.
+
 ## Cue-conflict threshold calibration
+
+The current pipeline uses a full blind visual review rather than an SSIM cutoff
+to select the quantitative cue-conflict set. Run the candidate-generation cell,
+then start the reviewer from the repository root:
+
+```bash
+python task1/cue_review_app/app.py
+```
+
+Open `http://127.0.0.1:8765`, approve/reject every candidate using the fixed
+quality rubric, and export once all ten buckets have at least 20 approvals. The
+export contains exactly 20 seeded approvals per bucket (200 total); rerunning
+Section 8 loads this manifest before any model evaluation. Decisions are saved
+after every click and can be resumed. See `cue_review_app/README.md` for details.
+
+If any bucket remains below quota, run
+`python task1/cue_review_app/generate_supplement.py`. It appends 40 unique new
+candidates only to deficient buckets while preserving every existing candidate
+and decision. Restart the GUI and review the new **Unreviewed** images.
+
+The older threshold calibration below is retained as provenance and a useful
+diagnostic; it no longer selects the evaluation set.
 
 The notebook generates the SSIM histogram before manual review, samples about
 10% from each pair/direction bucket with stable content-derived IDs, and writes

@@ -10,5 +10,6 @@ venv
 .ipynb_checkpoints/
 **/results/checkpoints/*.pt
 *.pth
+task1/results/cue_conflict_candidates/images/
 report_temp/
 report-temp-v2/

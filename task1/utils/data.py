@@ -172,9 +172,14 @@ def save_cached_features(backbone_name: str, condition: str, image_ids: List[str
     features = features.cpu()
     for row, image_id in enumerate(image_ids):
         path = CACHE_DIR / _image_cache_key(backbone_name, condition, image_id)
+        # A tensor slice is a view that retains the full batch storage.  Passing
+        # that view directly to torch.save serializes the entire batch once per
+        # image (and can turn a small cache into tens of gigabytes).  Clone the
+        # row so every file owns only its one-row storage.
+        feature_row = features[row:row + 1].clone()
         torch.save(
             {
-                "features": features[row:row + 1],
+                "features": feature_row,
                 "labels": [labels[row]],
                 "image_ids": [image_id],
             },
@@ -203,7 +208,8 @@ def extract_features(
     for _, _, ids in images_iterable_loader:
         all_ids.extend(list(ids))
 
-    cached = load_cached_features(backbone.name, condition, all_ids) if cache else None
+    cache_name = getattr(backbone, "cache_name", backbone.name)
+    cached = load_cached_features(cache_name, condition, all_ids) if cache else None
     if cached is not None:
         return cached
 
@@ -217,7 +223,7 @@ def extract_features(
     feats = torch.cat(feats, dim=0)
 
     if cache:
-        save_cached_features(backbone.name, condition, ids_out, feats, labels)
+        save_cached_features(cache_name, condition, ids_out, feats, labels)
     return {"features": feats, "labels": labels, "image_ids": ids_out}
 
 

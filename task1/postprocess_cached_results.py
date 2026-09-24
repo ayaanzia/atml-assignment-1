@@ -29,6 +29,7 @@ FIGURES = RESULTS / "figures"
 SEED = 6304
 CLASSES = ["airplane", "bird", "car", "cat", "deer", "dog", "horse", "monkey", "ship", "truck"]
 BACKBONES = ("resnet50", "vit_b_16", "clip_vit_b_32")
+CACHE_NAMES = {"clip_vit_b_32": "clip_vit_b_32_quickgelu"}
 CONDITIONS = ("grayscale", "cue_conflict", "translate_d32_up", "patch_shuffle")
 CUE_PAIRS = (("cat", "truck"), ("bird", "ship"), ("dog", "car"),
              ("horse", "airplane"), ("monkey", "deer"))
@@ -48,6 +49,7 @@ def read_json(path: Path):
 
 
 def load_aggregate(backbone: str, condition: str) -> dict:
+    backbone = CACHE_NAMES.get(backbone, backbone)
     paths = sorted(CACHE.glob(f"feat__{backbone}__{condition}__*.pt"))
     paths = [path for path in paths if "__image_" not in path.name]
     if len(paths) != 1:
@@ -57,6 +59,7 @@ def load_aggregate(backbone: str, condition: str) -> dict:
 
 def load_for_ids(backbone: str, condition: str, image_ids: list[str]) -> dict:
     """Load an ordered bundle from either legacy aggregate or stable per-image caches."""
+    backbone = CACHE_NAMES.get(backbone, backbone)
     aggregate_paths = sorted(CACHE.glob(f"feat__{backbone}__{condition}__*.pt"))
     aggregate_paths = [path for path in aggregate_paths if "__image_" not in path.name]
     for path in aggregate_paths:
@@ -91,9 +94,8 @@ def load_cue_manifest() -> pd.DataFrame:
     missing = required - set(manifest.columns)
     if missing:
         raise ValueError(f"Cue-conflict manifest is missing columns: {sorted(missing)}")
-    # Sampling is with replacement, so an exact content/style/direction triple
-    # may appear more than once. Such rows are identical images and intentionally
-    # share one stable cache id.
+    if not manifest["cue_id"].is_unique:
+        raise ValueError("Approved cue-conflict manifest contains duplicate IDs")
     return manifest
 
 

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cue-conflict blind review</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; }
+    body { margin: 0; background: #11151b; color: #eef2f6; }
+    main { max-width: 1100px; margin: auto; padding: 20px; }
+    header, .toolbar, .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    header { justify-content: space-between; }
+    button, select { font: inherit; padding: 10px 16px; border-radius: 8px; border: 1px solid #52606d; background: #202a35; color: inherit; }
+    button { cursor: pointer; }
+    button:hover { filter: brightness(1.2); }
+    .approve { background: #126b45; } .reject { background: #8a2930; }
+    .card { margin: 18px 0; padding: 18px; background: #19212b; border-radius: 12px; text-align: center; }
+    .shape-label { margin: 0 0 14px; font-size: clamp(24px, 4vw, 42px); font-weight: 800; letter-spacing: .06em; color: #8fd3ff; }
+    img { max-width: min(720px, 100%); max-height: 62vh; object-fit: contain; background: #0b0e12; }
+    .meta { color: #aeb9c5; margin: 10px; }
+    .actions { justify-content: center; margin-top: 14px; }
+    .actions button { min-width: 140px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 7px; border-bottom: 1px solid #34404d; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    .ok { color: #68d6a2; } .short { color: #ff9f9f; }
+    #message { min-height: 1.5em; color: #ffd37a; }
+    kbd { background: #303b47; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body><main>
+  <header><div><h1>Blind cue-conflict review</h1><p>Judge image quality only. Do not use model predictions.</p></div><div id="progress"></div></header>
+  <div class="toolbar">
+    <label>Bucket <select id="bucket"></select></label>
+    <label>Status <select id="status"><option value="unreviewed">Unreviewed</option><option value="all">All</option><option value="approve">Approved</option><option value="reject">Rejected</option></select></label>
+    <button id="prev">← Previous</button><button id="next">Next →</button>
+  </div>
+  <section class="card">
+    <div class="shape-label" id="shape"></div>
+    <img id="image" alt="Cue-conflict candidate">
+    <div class="meta" id="meta"></div>
+    <div class="actions">
+      <button class="approve" id="approve"><kbd>A</kbd> Approve</button>
+      <button class="reject" id="reject"><kbd>R</kbd> Reject</button>
+      <button id="undo"><kbd>U</kbd> Clear decision</button>
+    </div>
+  </section>
+  <p><strong>Approval rubric:</strong> approve only when the content object remains recognizable, the transferred texture is visibly present, and there is no severe smearing, collapse, clipping, or decoder artifact.</p>
+  <div id="message"></div>
+  <h2>Bucket coverage</h2><table><thead><tr><th>Pair and direction</th><th>Approved</th><th>Rejected</th><th>Unreviewed</th><th>Quota</th></tr></thead><tbody id="summary"></tbody></table>
+  <p><button id="export">Export balanced approved manifest</button></p>
+</main><script>
+let state, visible = [], cursor = 0;
+const $ = id => document.getElementById(id);
+async function api(path, payload) {
+  const response = await fetch(path, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+  const data = await response.json(); if (!response.ok) throw new Error(data.error || response.statusText); return data;
+}
+function refreshVisible(keepId) {
+  const bucket = $('bucket').value, status = $('status').value;
+  visible = state.candidates.filter(c => (bucket === 'all' || c.bucket_key === bucket) && (status === 'all' || (state.ratings[c.cue_id]?.rating || 'unreviewed') === status));
+  const found = visible.findIndex(c => c.cue_id === keepId); cursor = found >= 0 ? found : Math.min(cursor, Math.max(visible.length - 1, 0)); render();
+}
+function render() {
+  const c = visible[cursor];
+  $('shape').textContent = c ? `SHAPE: ${c.content_class.toUpperCase()}` : '';
+  $('image').style.visibility = c ? 'visible' : 'hidden';
+  $('image').src = c ? '/images/' + encodeURIComponent(c.cue_id) : '';
+  $('meta').textContent = c ? `${cursor+1}/${visible.length} · ${c.bucket_key} · ${c.cue_id} · decision: ${state.ratings[c.cue_id]?.rating || 'unreviewed'}` : 'No candidates match this filter.';
+  $('progress').textContent = `${state.summary.reviewed}/${state.summary.total} reviewed`;
+  $('summary').innerHTML = Object.entries(state.summary.buckets).map(([bucket,x]) => `<tr><td>${bucket}</td><td>${x.approve||0}</td><td>${x.reject||0}</td><td>${x.unreviewed||0}</td><td class="${(x.approve||0)>=state.quota?'ok':'short'}">${state.quota}</td></tr>`).join('');
+}
+async function rate(value) {
+  const c=visible[cursor]; if(!c)return; const old=c.cue_id; const result=await api('/api/rate',{cue_id:old,rating:value}); state.ratings[old]={rating:value}; state.summary=result.summary; refreshVisible(old);
+}
+async function undo() { const c=visible[cursor]; if(!c)return; const result=await api('/api/undo',{cue_id:c.cue_id}); delete state.ratings[c.cue_id]; state.summary=result.summary; refreshVisible(c.cue_id); }
+async function load() {
+  state=await fetch('/api/state').then(r=>r.json());
+  const buckets=['all',...Object.keys(state.summary.buckets)]; $('bucket').innerHTML=buckets.map(x=>`<option value="${x}">${x==='all'?'All buckets':x}</option>`).join(''); refreshVisible();
+}
+$('bucket').onchange=()=>refreshVisible(); $('status').onchange=()=>refreshVisible();
+$('prev').onclick=()=>{cursor=Math.max(0,cursor-1);render()}; $('next').onclick=()=>{cursor=Math.min(visible.length-1,cursor+1);render()};
+$('approve').onclick=()=>rate('approve'); $('reject').onclick=()=>rate('reject'); $('undo').onclick=undo;
+$('export').onclick=async()=>{try{const x=await api('/api/export',{});$('message').textContent=`Exported ${x.rows} rows to ${x.path}`;}catch(e){$('message').textContent=e.message;}};
+document.onkeydown=e=>{if(e.target.tagName==='SELECT')return;if(e.key.toLowerCase()==='a')rate('approve');if(e.key.toLowerCase()==='r')rate('reject');if(e.key.toLowerCase()==='u')undo();if(e.key==='ArrowLeft')$('prev').click();if(e.key==='ArrowRight')$('next').click();};
+load();
+  </script></body></html>
